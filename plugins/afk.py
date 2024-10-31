@@ -4,8 +4,8 @@ from pyrogram.enums import MessageEntityType
 from pyrogram import filters
 from pyrogram.types import Message
 from ANNIEMUSIC import app
-from mongo.readable_time import get_readable_time
-from mongo.afkdb import add_afk, is_afk, remove_afk
+from utils import get_readable_time
+from utils import add_afk, is_afk, remove_afk
 
 
 
