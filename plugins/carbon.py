@@ -30,4 +30,13 @@ async def _carbon(client, message):
     await text.delete()
     carbon.close()
 
+__MODULE__ = "Carbon"
+__HELP__ = """
+» Available commands for Carbon 
+
+● /carbon : makes carbon of the given text.
+
+/⁠ᐠ⁠｡⁠ꞈ⁠｡⁠ᐟ⁠
+"""
+
 
