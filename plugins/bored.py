@@ -21,3 +21,10 @@ async def bored_command(client, message):
             await message.reply("Nᴏ ᴀᴄᴛɪᴠɪᴛʏ ғᴏᴜɴᴅ.")
     else:
         await message.reply("Fᴀɪʟᴇᴅ ᴛᴏ ғᴇᴛᴄʜ ᴀᴄᴛɪᴠɪᴛʏ.")
+
+__MODULE__ = "Bored"
+__HELP__ = """
+» Available commands for repo :
+
+● /bored : ᴊᴜsᴛ ғᴏʀ ғᴜɴ😁. 
+"""
