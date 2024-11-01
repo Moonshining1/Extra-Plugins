@@ -68,3 +68,10 @@ async def get_domain_info(client, message):
         response = "Please provide a domain name after the /domain command."
 
     await message.reply(response)
+
+__MODULE__ = "Domain"
+__HELP__ = """
+» Available commands for repo :
+
+● /domain : ᴇɴᴛᴇʀ ᴛʜᴇ ᴅᴏᴍᴀɪɴ ɴᴀᴍᴇ ᴀғᴛᴇʀ ᴄᴏᴍᴍᴀɴᴅ ᴛᴏ ғɪɴᴅ ᴛʜᴇ ɪɴғᴏ ᴏғ ᴅᴏᴍᴀɪɴ.
+"""
