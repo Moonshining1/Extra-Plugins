@@ -143,3 +143,11 @@ async def ytmusic(client, message: Message):
     for files in (sedlyf, file_stark):
         if files and os.path.exists(files):
             os.remove(files)
+
+__MODULE__ = "Download"
+__HELP__ = """
+» Available commands for repo :
+
+● /audio : download audio of any music. 
+● /yt or /youtube: Download any video.
+"""
