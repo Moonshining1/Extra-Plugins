@@ -39,7 +39,7 @@ async def basket(bot, message):
     m=x.dice.value
     await message.reply_text(f"Hey {message.from_user.mention} your Score is : {m}",quote=True)
 
-__
+___MODULE__ = "Dice"
 __HELP__ = """
 » Available commands for repo :
 
