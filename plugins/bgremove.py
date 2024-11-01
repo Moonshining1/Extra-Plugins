@@ -57,3 +57,10 @@ async def rmbg(bot, message):
         os.remove(y)
     else:
         await rmbg.edit("Reply only to a photo to remove its background")
+
+__MODULE__ = "Bgremove"
+__HELP__ = """
+» Available commands for bgremove :
+
+● /rmbg :  ᴛᴏ ʀᴇᴍᴏᴠᴇ ʙᴀᴄᴋɢʀᴏᴜɴᴅ ғʀᴏᴍ ᴀɴ ɪᴍᴀɢᴇ..
+"""
