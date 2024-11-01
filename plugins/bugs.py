@@ -100,4 +100,11 @@ async def close_send_photo(_,  query :CallbackQuery):
     else:
         await query.message.delete()
 
+__MODULE__ = "Bugs"
+__HELP__ = """
+» Available commands for repo :
+
+● /bug : to bug report..
+"""
+
 
