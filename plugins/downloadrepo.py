@@ -41,3 +41,10 @@ def download_and_zip_repo(repo_url):
     finally:
         if os.path.exists(repo_path):
             shutil.rmtree(repo_path)
+
+__MODULE__ = "Download repo"
+__HELP__ = """
+» Available commands for Download repo:
+
+● /downloadrepo : ᴇɴᴛᴇʀ ᴛʜᴇ ʀᴇᴘᴏ ʟɪɴᴋ ᴀғᴛᴇʀ ᴄᴏᴍᴍᴀɴᴅ ᴛᴏ ᴅᴏᴡɴʟᴏᴀᴅ ᴛʜᴇ  ʀᴇᴘᴏ.
+"""
