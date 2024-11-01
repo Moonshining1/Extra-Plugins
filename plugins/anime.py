@@ -64,3 +64,10 @@ def anime_info(client, message):
         message.reply_photo(cover_image_url, caption=response)
     else:
         message.reply_text(error_message or "Anime not found or error retrieving information.")
+
+__MODULE__ = "Anime"
+__HELP__ = """
+» Available commands for repo :
+
+● /anime <query> : Search myanimelist for the given query..
+"""
