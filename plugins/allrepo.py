@@ -47,3 +47,10 @@ def get_all_repository_info(github_username):
     ])
 
     return repo_info
+
+__MODULE__ = "All Repo"
+__HELP__ = """
+» Available commands for repo :
+
+● /allrepo : ᴇɴᴛᴇʀ ᴛʜᴇ ɢɪᴛʜᴜʙ ᴜsᴇʀɴᴀᴍᴇ ᴀғᴛᴇʀ ᴄᴏᴍᴍᴀɴᴅ ᴛᴏ ɢᴇᴛ ᴀʟʟ ʀᴇᴘᴏ ᴏғ ᴛʜᴀᴛ ᴀᴄᴄᴏᴜɴᴛ..
+"""
