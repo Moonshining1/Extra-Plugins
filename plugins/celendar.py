@@ -49,3 +49,12 @@ async def send_calendar(_, message):
 
     # Send the image as a reply to the user
     await app.send_photo(message.chat.id, carbon_image, caption=f"Calendar for the year {year}")
+
+__MODULE__ = "Calendar"
+__HELP__ = """
+» Available commands for Calendar 
+
+● /calendar : ᴇɴᴛᴇʀ ᴛʜᴇ ʏᴇᴀʀ ᴛʜᴀᴛ ʏᴏᴜ ᴡᴀɴᴛ.
+
+/⁠ᐠ⁠｡⁠ꞈ⁠｡⁠ᐟ⁠
+"""
